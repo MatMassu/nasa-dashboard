@@ -1,8 +1,13 @@
 export async function GET(request: Request) {
+  const apiKey = process.env.NASA_API_KEY;
   try {
     const response = await fetch(
-      `https://api.nasa.gov/DONKI/CME?api_key=DEMO_KEY`
+      `https://api.nasa.gov/DONKI/CME?api_key=${apiKey}`,
+      { next: { revalidate: 9999999 } } // TESTING ONLY
     );
+
+    const remaining = response.headers.get("x-ratelimit-remaining"); // TESTING ONLY
+    console.log(remaining); // TESTING ONLY
 
     if (!response.ok) {
       return new Response(
@@ -26,7 +31,5 @@ export async function GET(request: Request) {
       status: 500,
       headers: { "Content-Type": "application/json" },
     });
-  } finally {
-    console.log("CME API call completed");
   }
 }

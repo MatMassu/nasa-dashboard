@@ -13,6 +13,7 @@ export interface CMEResponse {
   linkedEvents: null;
   sentNotifications: SentNotification[];
 }
+[];
 
 export enum Catalog {
   M2MCatalog = "M2M_CATALOG",
@@ -38,6 +39,7 @@ export interface CmeAnalysis {
   link: string;
   enlilList: EnlilList[];
 }
+[];
 
 export interface EnlilList {
   modelCompletionTime: string;
