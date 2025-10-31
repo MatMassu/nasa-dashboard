@@ -3,7 +3,7 @@ export async function GET(request: Request) {
   try {
     const response = await fetch(
       `https://api.nasa.gov/DONKI/CME?api_key=${apiKey}`,
-      { next: { revalidate: 9999999 } } // TESTING ONLY
+      { next: { revalidate: 86400 } }
     );
 
     const remaining = response.headers.get("x-ratelimit-remaining"); // TESTING ONLY
