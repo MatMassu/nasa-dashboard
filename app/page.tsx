@@ -9,20 +9,19 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null);
   const [selected, setSelected] = useState("date");
   const [sortAsc, setSortAsc] = useState(false);
-  const [earthImpact, setEarthImpact] = useState<
-    "any" | "gb" | "impact" | "no"
-  >("any");
+  const [earthImpact, setEarthImpact] = useState<"all" | "yes" | "no">("all");
 
   function toggleEarthImpact() {
-    setEarthImpact((prev) =>
-      prev === "any"
-        ? "gb"
-        : prev === "gb"
-        ? "impact"
-        : prev === "impact"
-        ? "no"
-        : "any"
-    );
+    setEarthImpact((prev) => {
+      switch (prev) {
+        case "all":
+          return "yes";
+        case "yes":
+          return "no";
+        case "no":
+          return "all";
+      }
+    });
   }
 
   useEffect(() => {
@@ -79,13 +78,7 @@ export default function Home() {
           </button>
           <button className="" onClick={toggleEarthImpact}>
             Earth Impact:{" "}
-            {earthImpact == "any"
-              ? "Any"
-              : earthImpact == "gb"
-              ? "Glancing Blow"
-              : earthImpact == "impact"
-              ? "Direct"
-              : "No"}
+            {earthImpact == "all" ? "All" : earthImpact == "yes" ? "Yes" : "No"}
           </button>
         </div>
       </header>

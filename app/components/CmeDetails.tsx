@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { CMEResponse } from "../types";
 
 export default function CmeDetails({
@@ -11,19 +12,26 @@ export default function CmeDetails({
   sortAsc: boolean;
   earthImpact: string;
 }) {
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   return (
-    <>
+    <div className="flex flex-wrap gap-4 p-4">
       {data
         .filter((cme) => {
           const analysis = cme.cmeAnalyses?.find((a) => a.isMostAccurate);
-          const gb = analysis?.enlilList[0]?.isEarthGB;
-          const impact = analysis?.enlilList[0]?.isEarthMinorImpact;
 
-          if (earthImpact === "any") return true;
-          if (earthImpact === "gb") return gb === true;
-          if (earthImpact === "impact") return impact === true;
-          if (earthImpact === "no") return gb !== true && impact !== true;
-          return true;
+          const yes =
+            analysis?.enlilList[0]?.isEarthGB ||
+            analysis?.enlilList[0]?.isEarthMinorImpact;
+          switch (earthImpact) {
+            case "all":
+              return true;
+            case "yes":
+              return yes === true;
+            case "no":
+              return yes == false;
+            default:
+              return "no";
+          }
         })
 
         .sort((a, b) => {
@@ -85,70 +93,113 @@ export default function CmeDetails({
             { dateStyle: "medium", timeStyle: "short" }
           );
 
+          const isSelected = selectedId === cme.activityID;
+          const kpMax = Math.max(
+            enlil?.kp_18 ?? 0,
+            enlil?.kp_90 ?? 0,
+            enlil?.kp_135 ?? 0,
+            enlil?.kp_180 ?? 0
+          );
+          const frequency = () => {
+            if (analysis?.type === "S" || analysis?.type === "C") {
+              return "Common";
+            } else if (analysis?.type === "O") {
+              return "Occasional";
+            } else if (analysis?.type === "R") {
+              return "Rare";
+            } else return "Extremely Rare";
+          };
+
+          const impactType = () => {
+            if (enlil?.isEarthMinorImpact) {
+              return "Direct Impact";
+            } else if (enlil?.isEarthGB && !enlil?.isEarthMinorImpact) {
+              return "Partial Impact";
+            } else return "No Impact";
+          };
+
           return (
-            <div key={cme.activityID} className="pb-8 pt-2 pl-2">
-              <p>
-                <strong>Start Time:</strong> {localTime} (
-                {Intl.DateTimeFormat().resolvedOptions().timeZone})
-              </p>
-              <p>
-                <strong>Note:</strong> {cme.note}
-              </p>
-              <p>
-                <strong>Speed:</strong> {analysis?.speed ?? "N/A"} km/s
-              </p>
-              <p>
-                <strong>Type:</strong> {analysis?.type ?? "N/A"}
-              </p>
-              <p>
-                <strong>Submission Time:</strong> {submissionTime}
-              </p>
-              <p>
-                <strong>Link:</strong>{" "}
-                <a href={cme.link} className="text-blue-500 underline">
-                  View CME
-                </a>
-              </p>
-              <p>
-                <strong>Estimated Shock Arrival: </strong>
-                {localShockTime}
-              </p>
-              <p>
-                <strong>Kp (18° longitude):</strong> {enlil?.kp_18 ?? "N/A"}
-              </p>
-              <p>
-                <strong>Kp (90° longitude):</strong> {enlil?.kp_90 ?? "N/A"}
-              </p>
-              <p>
-                <strong>Kp (135° longitude):</strong> {enlil?.kp_135 ?? "N/A"}
-              </p>
-              <p>
-                <strong>Kp (180° longitude):</strong> {enlil?.kp_180 ?? "N/A"}
-              </p>
-              <p>
-                <strong>Earth Glancing Blow:</strong>{" "}
-                {enlil?.isEarthGB ? "True" : "False"}
-              </p>
-              <p>
-                <strong>Earth Minor Impact:</strong>{" "}
-                {enlil?.isEarthMinorImpact ? "True" : "False"}
-              </p>
-              <p>
-                <strong>Message: </strong>
-                {notification?.messageURL ? (
-                  <a
-                    href={notification.messageURL}
-                    className="text-blue-500 underline"
-                  >
-                    View Alert
-                  </a>
-                ) : (
-                  "N/A"
-                )}
-              </p>
+            <div
+              key={cme.activityID}
+              onClick={() => setSelectedId(isSelected ? null : cme.activityID)}
+              className="bg-white w-[220px] h-[220px] cursor-pointer rounded-2xl p-4 shadow-md transition-all duration-200"
+            >
+              {!isSelected ? (
+                <div className="text-black text-center">
+                  <p>{localTime}</p>
+                  <p>{kpMax > 0 ? `Kp ${kpMax}` : ""}</p>
+                  <p>{impactType()}</p>
+                  <p>{analysis?.speed} km/s</p>
+                  <p> ({frequency()})</p>
+                </div>
+              ) : (
+                <div className="absolute inset-0 text-white bg-black">
+                  <p>
+                    <strong>Start Time:</strong> {localTime} (
+                    {Intl.DateTimeFormat().resolvedOptions().timeZone})
+                  </p>
+                  <p>
+                    <strong>Note:</strong> {cme.note}
+                  </p>
+                  <p>
+                    <strong>Speed:</strong> {analysis?.speed ?? "N/A"} km/s
+                  </p>
+                  <p>
+                    <strong>Type:</strong> {analysis?.type ?? "N/A"}
+                  </p>
+                  <p>
+                    <strong>Submission Time:</strong> {submissionTime}
+                  </p>
+                  <p>
+                    <strong>Link:</strong>{" "}
+                    <a href={cme.link} className="text-blue-500 underline">
+                      View CME
+                    </a>
+                  </p>
+                  <p>
+                    <strong>Estimated Shock Arrival: </strong>
+                    {localShockTime}
+                  </p>
+                  <p>
+                    <strong>Kp (18° longitude):</strong> {enlil?.kp_18 ?? "N/A"}
+                  </p>
+                  <p>
+                    <strong>Kp (90° longitude):</strong> {enlil?.kp_90 ?? "N/A"}
+                  </p>
+                  <p>
+                    <strong>Kp (135° longitude):</strong>{" "}
+                    {enlil?.kp_135 ?? "N/A"}
+                  </p>
+                  <p>
+                    <strong>Kp (180° longitude):</strong>{" "}
+                    {enlil?.kp_180 ?? "N/A"}
+                  </p>
+                  <p>
+                    <strong>Earth Glancing Blow:</strong>{" "}
+                    {enlil?.isEarthGB ? "True" : "False"}
+                  </p>
+                  <p>
+                    <strong>Earth Minor Impact:</strong>{" "}
+                    {enlil?.isEarthMinorImpact ? "True" : "False"}
+                  </p>
+                  <p>
+                    <strong>Message: </strong>
+                    {notification?.messageURL ? (
+                      <a
+                        href={notification.messageURL}
+                        className="text-blue-500 underline"
+                      >
+                        View Alert
+                      </a>
+                    ) : (
+                      "N/A"
+                    )}
+                  </p>
+                </div>
+              )}
             </div>
           );
         })}
-    </>
+    </div>
   );
 }
