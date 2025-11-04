@@ -162,7 +162,10 @@ export default function CmeDetails({
                   </div>
                 </div>
               ) : (
-                <div className="fixed inset-0 z-50 overflow-y-auto p-4 text-white bg-black">
+                <div className="fixed flex flex-col shadow-lg w-full h-full max-w-lg justify-center inset-0 z-50 p-4 text-white bg-black/60 backdrop-blur-sm">
+                  <h1 className="font-bold pb-3 text-xl underline">
+                    CME Details
+                  </h1>
                   <p>
                     <strong>Start Time:</strong> {localTime} (
                     {Intl.DateTimeFormat().resolvedOptions().timeZone})
