@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { CMEResponse } from "../types";
+import { clsx } from "clsx";
 
 export default function CmeDetails({
   data,
@@ -14,7 +15,7 @@ export default function CmeDetails({
 }) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   return (
-    <div className="flex flex-wrap gap-4 p-4">
+    <div className="flex flex-wrap justify-center gap-3 p-2 sm:p-4">
       {data
         .filter((cme) => {
           const analysis = cme.cmeAnalyses?.find((a) => a.isMostAccurate);
@@ -118,22 +119,50 @@ export default function CmeDetails({
             } else return "No Impact";
           };
 
+          const getBgColor = () => {
+            switch (frequency()) {
+              case "Common":
+                return "bg-lime-300";
+              case "Occasional":
+                return "bg-yellow-300";
+              case "Rare":
+                return "bg-orange-400";
+              case "Extremely Rare":
+                return "bg-red-500";
+              default:
+                return "bg-gray-200";
+            }
+          };
+
           return (
             <div
               key={cme.activityID}
               onClick={() => setSelectedId(isSelected ? null : cme.activityID)}
-              className="bg-white w-[220px] h-[220px] cursor-pointer rounded-2xl p-4 shadow-md transition-all duration-200"
+              className={clsx(
+                getBgColor(),
+                "w-[150px] h-[150px] sm:w-[200px] sm:h-[200px] cursor-pointer rounded-2xl p-4 shadow-md transition-all duration-200`"
+              )}
             >
               {!isSelected ? (
-                <div className="text-black text-center">
-                  <p>{localTime}</p>
-                  <p>{kpMax > 0 ? `Kp ${kpMax}` : ""}</p>
-                  <p>{impactType()}</p>
-                  <p>{analysis?.speed} km/s</p>
-                  <p> ({frequency()})</p>
+                <div className="flex flex-col justify-betweem h-full text-center text-black sm:text-base">
+                  <p className="text-[10px] sm:text-xs mb-1">{localTime}</p>
+
+                  <div className="flex flex-col items-center justify-center flex-1">
+                    <p className="text-xl sm:text-3xl font-bold">
+                      Kp {kpMax > 0 ? `${kpMax}` : "-"}
+                    </p>
+                    <p className="text-[10px] sm:text-sm mt-1">
+                      {impactType()}
+                    </p>
+                  </div>
+
+                  <div className="text-[10px] sm:text-xs mt-1">
+                    <p>{analysis?.speed} km/s</p>
+                    <p> ({frequency()})</p>
+                  </div>
                 </div>
               ) : (
-                <div className="absolute inset-0 text-white bg-black">
+                <div className="fixed inset-0 z-50 overflow-y-auto p-4 text-white bg-black">
                   <p>
                     <strong>Start Time:</strong> {localTime} (
                     {Intl.DateTimeFormat().resolvedOptions().timeZone})

@@ -43,12 +43,12 @@ export default function Home() {
   if (!data) return <p>Loading...</p>;
 
   return (
-    <div className="flex flex-col bg-[#0a3c9173] font-sans">
-      <header className="flex items-center h-12 min-w-screen bg-black">
-        <div className="flex min-w-40 justify-between gap-x-8">
-          <strong>
-            <p className="ml-2">Sort by:</p>
-          </strong>
+    <div className="flex flex-col min-h-screen bg-[rgba(29,12,126,0.64)] font-sans">
+      <div className="bg-black flex pt-2 text-2xl font-bold w-screen justify-center">
+        CME Watch
+      </div>
+      <header className="flex flex-wrap items-center justify-center gap-2 px-2 min-h-10 h-auto sm:h-10 min-w-screen bg-black text-white text-sm sm:text-base">
+        <div className="flex flex-wrap justify-center gap-5">
           <button
             className=""
             onClick={() => {
