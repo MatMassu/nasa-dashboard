@@ -140,32 +140,34 @@ export default function CmeDetails({
               onClick={() => setSelectedId(isSelected ? null : cme.activityID)}
               className={clsx(
                 getBgColor(),
-                "w-[150px] h-[150px] sm:w-[200px] sm:h-[200px] cursor-pointer rounded-2xl p-4 shadow-md transition-all duration-200`"
+                "w-[150px] h-[150px] sm:w-[200px] sm:h-[200px] cursor-pointer rounded-2xl p-4 shadow-md",
+                !isSelected &&
+                  "hover:shadow-xl transform transition-all sm:hover:scale-105"
               )}
             >
-              {!isSelected ? (
-                <div className="flex flex-col justify-betweem h-full text-center text-black sm:text-base">
-                  <p className="text-[10px] sm:text-xs mb-1">{localTime}</p>
+              <div className="flex flex-col justify-betweem h-full text-center text-black sm:text-base">
+                <p className="text-[10px] sm:text-xs mb-1">{localTime}</p>
 
-                  <div className="flex flex-col items-center justify-center flex-1">
-                    <p className="text-xl sm:text-3xl font-bold">
-                      Kp {kpMax > 0 ? `${kpMax}` : "-"}
-                    </p>
-                    <p className="text-[10px] sm:text-sm mt-1">
-                      {impactType()}
-                    </p>
-                  </div>
-
-                  <div className="text-[10px] sm:text-xs mt-1">
-                    <p>{analysis?.speed} km/s</p>
-                    <p> ({frequency()})</p>
-                  </div>
+                <div className="flex flex-col items-center justify-center flex-1">
+                  <p className="text-xl sm:text-3xl font-bold">
+                    Kp {kpMax > 0 ? `${kpMax}` : "-"}
+                  </p>
+                  <p className="text-[10px] sm:text-sm mt-1">{impactType()}</p>
                 </div>
-              ) : (
+
+                <div className="text-[10px] sm:text-xs mt-1">
+                  <p>{analysis?.speed} km/s</p>
+                  <p> ({frequency()})</p>
+                </div>
+              </div>
+              {isSelected ? (
                 <div className="fixed flex flex-col shadow-lg w-full h-full max-w-lg justify-center inset-0 z-50 p-4 text-white bg-black/60 backdrop-blur-sm">
                   <h1 className="font-bold pb-3 text-xl underline">
                     CME Details
                   </h1>
+                  <p>
+                    <strong>ID</strong>: {cme.activityID}
+                  </p>
                   <p>
                     <strong>Start Time:</strong> {localTime} (
                     {Intl.DateTimeFormat().resolvedOptions().timeZone})
@@ -228,6 +230,8 @@ export default function CmeDetails({
                     )}
                   </p>
                 </div>
+              ) : (
+                <></>
               )}
             </div>
           );
