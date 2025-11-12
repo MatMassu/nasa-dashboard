@@ -100,9 +100,10 @@ export default function Home() {
                   Kp index
                 </a>
               </strong>{" "}
-              - A 1-9 scale of geomagnetic activity. Anything over 5 constitutes
-              a geomagnetic storm, with higher numbers indicating a stronger
-              effect on the planet.
+              - A color coded 1-9 scale of geomagnetic activity. Anything over 5
+              constitutes a geomagnetic storm, with higher numbers indicating a
+              stronger effect on the planet, including auroras and GPS
+              disruptions.
             </li>
             <li>
               <strong>Impact type</strong> - Whether the CME hit Earth, and if
@@ -112,11 +113,12 @@ export default function Home() {
               <strong>Speed</strong> - The CME's velocity in km/s.
             </li>
             <li>
-              <strong>Frequency</strong> - The event's rarity, color coded:
-              <span className="text-lime-600"> Common</span>,
-              <span className="text-yellow-500"> Occasional</span>,
-              <span className="text-orange-500"> Rare</span>, and
-              <span className="text-red-500"> Extremely Rare</span>.
+              <strong>Frequency</strong> - The event's rarity according to the
+              SCORE CME typification system:
+              <span> Common (500-999 km/s)</span>,
+              <span> Occasional (1000-1999 km/s)</span>,
+              <span> Rare (2000-2999 km/s)</span>, and
+              <span> Extremely Rare (+3000 km/s)</span>.
             </li>
           </ul>
           <p className="mt-2">

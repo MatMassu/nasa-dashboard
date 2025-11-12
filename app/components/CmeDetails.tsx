@@ -20,16 +20,21 @@ export default function CmeDetails({
         .filter((cme) => {
           const analysis = cme.cmeAnalyses?.find((a) => a.isMostAccurate);
 
-          const yes =
+          const impact =
             analysis?.enlilList[0]?.isEarthGB ||
-            analysis?.enlilList[0]?.isEarthMinorImpact;
+            analysis?.enlilList[0]?.isEarthMinorImpact ||
+            analysis?.enlilList[0]?.kp_18 != null ||
+            analysis?.enlilList[0]?.kp_90 != null ||
+            analysis?.enlilList[0]?.kp_135 != null ||
+            analysis?.enlilList[0]?.kp_180 != null;
+
           switch (earthImpact) {
             case "all":
               return true;
             case "yes":
-              return yes === true;
+              return impact === true;
             case "no":
-              return yes == false;
+              return impact == false;
             default:
               return "no";
           }
@@ -112,14 +117,15 @@ export default function CmeDetails({
           };
 
           const impactType = () => {
-            if (enlil?.isEarthMinorImpact) {
+            if (enlil?.isEarthMinorImpact || kpMax >= 6) {
               return "Direct Impact";
             } else if (enlil?.isEarthGB && !enlil?.isEarthMinorImpact) {
               return "Partial Impact";
             } else return "No Impact";
           };
 
-          const getBgColor = () => {
+          {
+            /* const getBgColor = () => {
             switch (frequency()) {
               case "Common":
                 return "bg-lime-300";
@@ -132,6 +138,25 @@ export default function CmeDetails({
               default:
                 return "bg-gray-200";
             }
+          }; */
+          }
+
+          const getBgColor = () => {
+            if (kpMax <= 5 || (kpMax === 0 && frequency() === "Common")) {
+              return "bg-lime-300";
+            } else if (
+              kpMax === 6 ||
+              (kpMax === 0 && frequency() === "Occasional")
+            ) {
+              return "bg-yellow-300";
+            } else if (kpMax === 7 || (kpMax === 0 && frequency() === "Rare")) {
+              return "bg-orange-400";
+            } else if (
+              kpMax >= 8 ||
+              (kpMax === 0 && frequency() === "Extremely Rare")
+            ) {
+              return "bg-red-500";
+            } else return "bg-gray-200";
           };
 
           return (
